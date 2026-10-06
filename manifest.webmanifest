@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "Diário de Treino",
+  "short_name": "Treino",
+  "description": "Registo de cargas e reps do plano Push, Pull, Legs e Arms.",
+  "lang": "pt-PT",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ECEEEA",
+  "theme_color": "#ECEEEA",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
