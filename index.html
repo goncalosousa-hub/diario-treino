@@ -234,7 +234,8 @@ const DAYS = {
       alt:{ id:'pulldown', name:'Puxada à frente' } },
     { id:'bb-row', name:'Remada curvada com barra', sets:3, min:8, max:10, rest:150, inc:2.5 },
     { id:'close-pulldown', name:'Puxada à frente com pega fechada', sets:3, min:10, max:12, rest:120, inc:2.5 },
-    { id:'cable-row', name:'Remada sentada na polia', sets:3, min:10, max:12, rest:120, inc:2.5 },
+    { id:'db-row', name:'Remada unilateral com haltere', sets:3, min:10, max:12, rest:120, inc:2, note:'por braço',
+      alt:{ id:'chest-row', name:'Remada com apoio no peito', note:'' } },
     { id:'face-pull', name:'Face pull', sets:3, min:12, max:15, rest:90, inc:2.5 },
     { id:'hammer', name:'Curl martelo', sets:3, min:10, max:12, rest:90, inc:2 },
   ]},
@@ -270,7 +271,7 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
 }
 
 /* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
-const APP_VERSION = '2026-10-07.2';
+const APP_VERSION = '2026-10-07.3';
 const CFG = {
   repo: 'goncalosousa-hub/diario-treino-dados',
   api: '', // endereço do servidor de avisos, preenchido depois de o publicar
@@ -323,6 +324,13 @@ const S = {
 const DOC_ID = /^\d{4}-\d{2}-\d{2}_(push|pull|legs|arms)$/;
 const KEY = /^[a-z0-9-]{1,40}$/;
 const okNum = v => typeof v === 'number' && isFinite(v) && v >= 0 && v < 1000;
+// Exercícios que mudaram de id: o ginásio não tem a máquina de remada sentada na polia.
+const RENAMED = { 'cable-row': 'db-row' };
+const MIGRATED = new Set();
+function flushMigrated() {
+  if (S.gh.token) for (const id of MIGRATED) S.gh.dirty[id] = 1;
+  MIGRATED.clear();
+}
 function clean(id, body) {
   if (!DOC_ID.test(id) || !body || typeof body !== 'object') return null;
   const [date, day] = id.split('_');
@@ -336,6 +344,12 @@ function clean(id, body) {
         t: s && typeof s.t === 'number' && isFinite(s.t) ? s.t : null,
       }));
     }
+  }
+  for (const [from, to] of Object.entries(RENAMED)) {
+    if (!sets[from]) continue;
+    sets[to] = (sets[to] || []).concat(sets[from]);
+    delete sets[from];
+    MIGRATED.add(id);
   }
   if (body.variants && typeof body.variants === 'object') {
     for (const [k, v] of Object.entries(body.variants)) if (KEY.test(k) && typeof v === 'string' && KEY.test(v)) variants[k] = v;
@@ -360,6 +374,7 @@ function readStore() {
   if (o.tips) S.tips = cleanTips(o.tips);
   if (o.tipsSeen && typeof o.tipsSeen === 'object') S.tipsSeen = o.tipsSeen;
   if (o.push && typeof o.push === 'object') S.push = { enabled: o.push.enabled === true, endpoint: String(o.push.endpoint || '') };
+  if (MIGRATED.size) { flushMigrated(); writeStore(); }
 }
 function writeStore() {
   try {
@@ -598,7 +613,7 @@ function cardHTML(it, n) {
   <span class="num" aria-hidden="true">${n}</span>
   <div style="flex:1;min-width:0">
     <h3 class="ex-name">${esc(ex.name)}</h3>
-    <div class="meta">${ex.sets} × ${ex.min}–${ex.max}${ex.bw ? ' · peso do corpo' : ''} · ${restTxt}</div>
+    <div class="meta">${ex.sets} × ${ex.min}–${ex.max}${ex.note ? ' ' + ex.note : ''}${ex.bw ? ' · peso do corpo' : ''} · ${restTxt}</div>
   </div>
 </div>
 ${swap || status ? `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px">${status}${swap}</div>` : ''}
@@ -1081,6 +1096,7 @@ async function pullRemote() {
     else if (mine.updatedAt > c.updatedAt) S.gh.dirty[id] = 1;
   }
   for (const [id, d] of Object.entries(S.docs)) if (!remote.has(id) && hasContent(d)) S.gh.dirty[id] = 1;
+  flushMigrated(); // sessões no GitHub com ids antigos voltam a ser enviadas com os novos
   if (changed) {
     S.lastChange = Date.now();
     if (!S.picked) { const d = defaultSelection(); S.day = d.day; S.date = d.date; }
