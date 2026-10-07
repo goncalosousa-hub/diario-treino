@@ -60,7 +60,7 @@ button:disabled{cursor:default;opacity:.45}
 .wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:10px 150px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:3px;background:var(--sunk);border-radius:12px}
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:3px;background:var(--sunk);border-radius:12px}
 .tab{height:38px;border-radius:9px;font-weight:600;color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--raised);color:var(--fg);box-shadow:var(--shadow)}
 
@@ -136,6 +136,20 @@ details[open]>summary .chev{transform:rotate(90deg)}
 .dbtn{min-width:42px;height:40px;padding:0 8px;border-radius:10px;border:1px solid color-mix(in srgb,currentColor 35%,transparent);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
 .dbtn:active{background:color-mix(in srgb,currentColor 16%,transparent)}
 .toast{position:fixed;left:16px;right:16px;bottom:calc(104px + env(safe-area-inset-bottom,0px));z-index:30;max-width:440px;margin-inline:auto;padding:10px 14px;border-radius:12px;background:var(--fg);color:var(--bg);font-size:14px;box-shadow:var(--shadow-lg)}
+.tdot{display:inline-block;width:7px;height:7px;margin-left:5px;border-radius:50%;background:var(--up);vertical-align:2px}
+.field{width:100%;height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:var(--sunk);color:var(--fg);font-family:var(--f-code);font-size:16px}
+.field:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+.state{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600}
+.state::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--sc,var(--muted))}
+.tipline{margin:10px 0 0;padding:9px 11px;border-radius:10px;background:color-mix(in srgb,var(--accent) 9%,transparent);font-size:13.5px;line-height:1.4}
+.tipline b{margin-right:4px;color:var(--accent)}
+.tips{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+.tips li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:9px;font-size:14.5px;line-height:1.42}
+.mk{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;margin-top:1px}
+.mk.bom{background:var(--ok-soft);color:var(--ok)}
+.mk.atencao{background:var(--up-soft);color:var(--up)}
+.mk.dica{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
+a.btn{display:inline-flex;align-items:center;color:inherit;text-decoration:none}
 @media (prefers-reduced-motion: no-preference){
   .chev{transition:transform .15s ease}
   .dock{animation:rise .18s ease-out}
@@ -147,12 +161,14 @@ details[open]>summary .chev{transform:rotate(90deg)}
 <div class="wrap">
   <header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px;padding-block:6px 14px">
     <h1 style="margin:0;font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1;letter-spacing:.005em">Diário de Treino</h1>
+    <button class="icon-btn" id="open-settings" data-view="definicoes" aria-label="Definições"><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Definições</button>
   </header>
 
   <nav class="tabs" role="tablist" aria-label="Secções">
     <button class="tab" role="tab" id="tab-treino" data-view="treino" aria-selected="true" aria-controls="v-treino">Treino</button>
     <button class="tab" role="tab" id="tab-historico" data-view="historico" aria-selected="false" aria-controls="v-historico">Histórico</button>
     <button class="tab" role="tab" id="tab-progresso" data-view="progresso" aria-selected="false" aria-controls="v-progresso">Progresso</button>
+    <button class="tab" role="tab" id="tab-dicas" data-view="dicas" aria-selected="false" aria-controls="v-dicas">Dicas<span class="tdot" id="tips-dot" hidden></span></button>
   </nav>
 
   <p id="banner" hidden style="margin:12px 0 0;padding:10px 12px;border-radius:12px;background:var(--up-soft);font-size:14px;line-height:1.4"></p>
@@ -169,6 +185,8 @@ details[open]>summary .chev{transform:rotate(90deg)}
   </section>
   <section id="v-historico" role="tabpanel" aria-labelledby="tab-historico" hidden style="display:grid;gap:16px;margin-top:18px"></section>
   <section id="v-progresso" role="tabpanel" aria-labelledby="tab-progresso" hidden style="display:grid;gap:16px;margin-top:18px"></section>
+  <section id="v-dicas" role="tabpanel" aria-labelledby="tab-dicas" hidden style="display:grid;gap:16px;margin-top:18px"></section>
+  <section id="v-definicoes" hidden style="display:grid;gap:14px;margin-top:18px" aria-label="Definições"></section>
 </div>
 
 <div id="dock" class="dock" hidden>
@@ -251,6 +269,13 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
   if (it.alt && !EX[it.alt.id]) EX[it.alt.id] = { ...it, alt:undefined, bw:false, upHint:undefined, ...it.alt, group, altOf:it.id };
 }
 
+/* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
+const CFG = {
+  repo: 'goncalosousa-hub/diario-treino-dados',
+  api: '', // endereço do servidor de avisos, preenchido depois de o publicar
+  tokenUrl: 'https://github.com/settings/personal-access-tokens/new?name=Di%C3%A1rio%20de%20Treino&description=App%20Di%C3%A1rio%20de%20Treino%20no%20iPhone&target_name=goncalosousa-hub&expires_in=366&contents=write',
+};
+
 /* ---------- Datas e números ---------- */
 const pad = n => String(n).padStart(2, '0');
 const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -290,6 +315,9 @@ const S = {
   docs:{}, lastBackup:null, lastChange:0, sound:true, hideInstall:false, remindLater:0,
   picked:false, needsRender:false, saveError:false,
   timer:null, tickId:0, hideId:0, wake:null, reload:null,
+  gh:{ token:'', shas:{}, dirty:{}, lastSync:0, error:'' },
+  tips:{ sessions:{} }, tipsSeen:{},
+  push:{ enabled:false, endpoint:'' },
 };
 const DOC_ID = /^\d{4}-\d{2}-\d{2}_(push|pull|legs|arms)$/;
 const KEY = /^[a-z0-9-]{1,40}$/;
@@ -322,10 +350,22 @@ function readStore() {
   if (typeof o.lastChange === 'number') S.lastChange = o.lastChange;
   if (typeof o.sound === 'boolean') S.sound = o.sound;
   if (o.hideInstall === true) S.hideInstall = true;
+  if (o.gh && typeof o.gh === 'object') {
+    S.gh.token = typeof o.gh.token === 'string' ? o.gh.token : '';
+    S.gh.shas = o.gh.shas && typeof o.gh.shas === 'object' ? o.gh.shas : {};
+    S.gh.dirty = o.gh.dirty && typeof o.gh.dirty === 'object' ? o.gh.dirty : {};
+    S.gh.lastSync = typeof o.gh.lastSync === 'number' ? o.gh.lastSync : 0;
+  }
+  if (o.tips) S.tips = cleanTips(o.tips);
+  if (o.tipsSeen && typeof o.tipsSeen === 'object') S.tipsSeen = o.tipsSeen;
+  if (o.push && typeof o.push === 'object') S.push = { enabled: o.push.enabled === true, endpoint: String(o.push.endpoint || '') };
 }
 function writeStore() {
   try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ v:1, sessions:S.docs, lastBackup:S.lastBackup, lastChange:S.lastChange, sound:S.sound, hideInstall:S.hideInstall }));
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      v:1, sessions:S.docs, lastBackup:S.lastBackup, lastChange:S.lastChange, sound:S.sound, hideInstall:S.hideInstall,
+      gh:{ token:S.gh.token, shas:S.gh.shas, dirty:S.gh.dirty, lastSync:S.gh.lastSync }, tips:S.tips, tipsSeen:S.tipsSeen, push:S.push,
+    }));
     if (S.saveError) { S.saveError = false; paintBanner(); }
     return true;
   } catch {
@@ -358,8 +398,10 @@ function touch() {
   d.updatedAt = Date.now();
   S.lastChange = d.updatedAt;
   S.picked = true;
+  if (S.gh.token) { S.gh.dirty[sid()] = 1; scheduleSync(); }
   writeStore();
 }
+const hasContent = d => !!d && (countLogged(d) > 0 || !!d.notes.trim());
 
 /* ---------- Lógica do plano ---------- */
 function lastFor(exId) {
@@ -389,20 +431,27 @@ function slotInfo(it) {
   const sets = (d && d.sets[exId]) || [];
   const prev = lastFor(exId);
   const prevL = prev ? logged(prev.sets[exId]) : [];
-  const firstN = prevL.slice(0, ex.sets);
-  const earned = prevL.length >= ex.sets && firstN.every(s => s.r >= ex.max);
-  const topW = firstN.reduce((m, s) => (s.w != null && s.w > m ? s.w : m), 0);
-  return { it, exId, ex, sets, prev, prevL, earned, upTo: earned && topW > 0 ? round2(topW + ex.inc) : null };
+  // séries de trabalho: as feitas com o peso mais alto; as mais leves contam como aquecimento
+  const topW = prevL.reduce((m, s) => (s.w != null && s.w > m ? s.w : m), 0);
+  const work = !ex.bw && topW > 0 ? prevL.filter(s => s.w === topW) : prevL;
+  const earned = work.length >= ex.sets && work.slice(0, ex.sets).every(s => s.r >= ex.max);
+  return { it, exId, ex, sets, prev, prevL, work, topW, earned, upTo: earned && topW > 0 ? round2(topW + ex.inc) : null };
 }
-// Sugestão para a série i: peso da série anterior de hoje, senão o da última sessão (+ incremento se chegaste ao topo das reps).
+// Sugestão para a série i: peso da série anterior de hoje; senão o peso de trabalho da última sessão
+// (+ incremento se chegaste ao topo das reps em todas as séries de trabalho).
 function suggest(info, i) {
-  const { ex, sets, prevL, earned } = info;
+  const { ex, sets, work, earned, topW } = info;
   let w = null, r = null;
   for (let j = i - 1; j >= 0; j--) { const s = sets[j]; if (s && s.w != null && (s.w > 0 || !ex.bw)) { w = s.w; break; } }
-  const p = prevL.length ? prevL[Math.min(i, prevL.length - 1)] : null;
-  const bump = earned && p && p.w != null && p.w > 0;
-  if (w == null && p && p.w != null && (p.w > 0 || !ex.bw)) w = bump ? round2(p.w + ex.inc) : p.w;
-  if (p) r = bump ? ex.min : p.r;
+  const p = work.length ? work[Math.min(i, work.length - 1)] : null;
+  if (ex.bw) {
+    const bump = earned && p && p.w > 0;
+    if (w == null && p && p.w > 0) w = bump ? round2(p.w + ex.inc) : p.w;
+    if (p) r = bump ? ex.min : p.r;
+  } else {
+    if (w == null && topW > 0) w = earned ? round2(topW + ex.inc) : topW;
+    if (p) r = earned ? ex.min : p.r;
+  }
   return { w, r };
 }
 function setTxt(s, ex) {
@@ -470,6 +519,11 @@ function renderTopCards() {
   if (!standalone() && !S.hideInstall) {
     html += `<div class="panel"><h3>Instala no ecrã principal</h3><p>No Safari, toca em <b style="color:var(--fg)">Partilhar</b> e depois em <b style="color:var(--fg)">Adicionar ao ecrã principal</b>. Instala antes de registar: o que guardares aqui no Safari não passa para a app instalada.</p><div class="actions"><button class="btn" data-hide-install>Já instalei</button></div></div>`;
   }
+  const fresh = latestUnseenTip();
+  if (fresh) {
+    const [id, t] = fresh, d = id.split('_');
+    html += `<div class="panel" style="border-color:color-mix(in srgb,var(--accent) 45%,var(--line))"><p style="font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)">Dicas do teu ${esc(DAYS[d[1]].name)} · ${fmtDate(d[0])}</p><h3>${esc(t.titulo || 'Dicas do treino')}</h3>${t.resumo ? `<p style="color:var(--fg)">${esc(t.resumo)}</p>` : ''}<div class="actions"><button class="btn primary" data-goto="dicas">Ver dicas</button></div></div>`;
+  }
   if (!loggedSessions().length) {
     html += `<div class="panel"><h3>Trazer treinos que já tens</h3><p>Se vens do Diário de Treino no Claude, cola o código de importação. Também aceita uma cópia de segurança (JSON) ou o CSV exportado.</p>${importBoxHTML('top')}</div>`;
   } else if (backupDue()) {
@@ -479,6 +533,7 @@ function renderTopCards() {
   $('top-cards').hidden = !html;
 }
 function backupDue() {
+  if (S.gh.token && Date.now() - S.gh.lastSync < 7 * 864e5) return false; // o GitHub já guarda uma cópia
   if (S.remindLater && Date.now() - S.remindLater < 12 * 3600e3) return false;
   if (loggedSessions().length < 3) return false;
   if (S.lastBackup && S.lastChange <= S.lastBackup) return false;
@@ -536,6 +591,7 @@ function cardHTML(it, n) {
   let status = '';
   if (earned) status = `<span class="badge"><span aria-hidden="true">↑</span> ${upTo != null ? `Sobe para ${ex.bw ? '+' : ''}${fmtKg(upTo)} kg` : esc(ex.upHint || 'Topo do intervalo: aumenta a dificuldade')}</span>`;
   else if (prev) status = `<span class="last">Última vez: ${fmtDate(prev.date)} · ${relTxt(prev.date)}</span>`;
+  const tip = tipFor(it, exId);
   return `<article class="card" data-slot="${it.id}" data-ex="${exId}" data-n="${n}">
 <div style="display:flex;gap:10px;align-items:flex-start">
   <span class="num" aria-hidden="true">${n}</span>
@@ -545,6 +601,7 @@ function cardHTML(it, n) {
   </div>
 </div>
 ${swap || status ? `<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px">${status}${swap}</div>` : ''}
+${tip ? `<p class="tipline"><b>Dica do Claude</b>${esc(tip)}</p>` : ''}
 <div class="grid ghead" aria-hidden="true"><span style="text-align:center">Série</span><span>Anterior</span><span style="text-align:center">${ex.bw ? '+kg' : 'kg'}</span><span style="text-align:center">Reps</span><span></span></div>
 ${rowsHTML}
 <button class="add" data-add>+ Série</button>
@@ -603,7 +660,7 @@ function onCheck(card, row) {
     s.w = w; s.r = sug.r; if (!s.t) s.t = Date.now();
     touch(); refreshCard(card);
   }
-  startRest(it, ex);
+  startRest(it, ex, i);
 }
 
 /* ---------- Temporizador de descanso ---------- */
@@ -640,9 +697,21 @@ function showDock(o) {
   $('dock-bar').style.transform = `scaleX(${o.bar})`;
   $('dock-adj').hidden = !S.timer;
 }
-function hideDock() { clearInterval(S.tickId); clearTimeout(S.hideId); S.timer = null; wakeOff(); $('dock').hidden = true; }
-function startRest(it, ex) {
+function hideDock() {
+  if (S.timer && S.timer.pushed && !S.timer.cancelSent) pushCancel();
+  clearInterval(S.tickId); clearTimeout(S.hideId); S.timer = null; wakeOff(); $('dock').hidden = true;
+}
+// Texto da notificação: a série seguinte do mesmo exercício ou o exercício seguinte.
+function nextText(it, ex, i) {
+  const items = DAYS[S.day].items, info = slotInfo(it);
+  const rows = Math.max(ex.sets, info.sets.length);
+  if (i != null && i + 1 < rows) return `Série ${i + 2} de ${ex.name}`;
+  const nx = items[items.indexOf(it) + 1];
+  return nx ? `Agora: ${EX[chosenId(nx)].name}` : 'Último exercício do treino';
+}
+function startRest(it, ex, i) {
   unlockAudio();
+  if (S.timer && S.timer.pushed && !S.timer.cancelSent) pushCancel();
   clearInterval(S.tickId); clearTimeout(S.hideId);
   $('dock').style.setProperty('--c', `var(--${S.day})`);
   if (!it.rest) {
@@ -652,13 +721,16 @@ function startRest(it, ex) {
     S.hideId = setTimeout(hideDock, 7000);
     return;
   }
-  S.timer = { end: Date.now() + it.rest * 1000, total: it.rest * 1000, name: ex.name };
+  S.timer = { end: Date.now() + it.rest * 1000, total: it.rest * 1000, name: ex.name, next: nextText(it, ex, i), pushed:false, cancelSent:false };
+  pushSchedule();
   wakeOn(); tick();
   S.tickId = setInterval(tick, 250);
 }
 function tick() {
   const t = S.timer; if (!t) return;
   const left = t.end - Date.now();
+  // com a app à frente, o aviso é o da app: cancela a notificação mesmo antes do fim
+  if (t.pushed && !t.cancelSent && left <= 2500 && document.visibilityState === 'visible') pushCancel();
   if (left <= 0) {
     clearInterval(S.tickId); S.timer = null; wakeOff();
     showDock({ label:'Descanso feito', sub:'Próxima série', time:'0:00', fin:true, bar:0 });
@@ -702,7 +774,9 @@ function sessHTML(id, d) {
     const ex = EX[exId];
     return `<div class="line"><b>${esc(ex ? ex.name : exId)}</b><span>${esc(setsLine(L, ex))}</span></div>`;
   }).join('');
-  const notes = d.notes.trim() ? `<div class="line"><b>Notas</b><span style="white-space:pre-wrap">${esc(d.notes)}</span></div>` : '';
+  const tips = S.tips.sessions[id];
+  const notes = (d.notes.trim() ? `<div class="line"><b>Notas</b><span style="white-space:pre-wrap">${esc(d.notes)}</span></div>` : '')
+    + (tips ? `<div class="line"><b>Dicas do Claude</b><span>${esc(tips.titulo || 'Ver no separador Dicas')}</span></div>` : '');
   return `<details class="sess"><summary>
 <span class="dot" style="--c:var(--${d.day})"></span>
 <span style="min-width:0;display:grid;gap:1px">
@@ -715,7 +789,9 @@ function dataPanelHTML() {
   const n = loggedSessions().length;
   return `<div class="panel" id="data-panel" style="margin-top:6px">
 <h3>Cópia de segurança</h3>
-<p>Os treinos ficam guardados só neste iPhone. Faz uma cópia de vez em quando e guarda-a no iCloud Drive. Se apagares a app do ecrã principal, os dados vão com ela. ${S.lastBackup ? `Última cópia: ${ago(S.lastBackup)}.` : 'Ainda não fizeste nenhuma cópia.'}</p>
+<p>${S.gh.token
+    ? 'Com a ligação ao GitHub, os treinos já ficam guardados no teu repositório: se reinstalares a app, voltam todos quando a ligares de novo. A cópia em ficheiro é um extra.'
+    : 'Os treinos ficam guardados só neste iPhone. Faz uma cópia de vez em quando e guarda-a no iCloud Drive. Se apagares a app do ecrã principal, os dados vão com ela.'} ${S.lastBackup ? `Última cópia: ${ago(S.lastBackup)}.` : ''}</p>
 <div class="actions"><button class="btn primary" data-backup${n ? '' : ' disabled'}>Fazer cópia</button><button class="btn" data-csv${n ? '' : ' disabled'}>Exportar CSV</button><button class="btn" data-show-import>Importar</button></div>
 <div id="import-box" hidden style="display:grid;gap:10px">${importBoxHTML('hist')}</div>
 </div>`;
@@ -725,7 +801,7 @@ function renderHistory() {
   const list = Object.entries(S.docs).filter(([, d]) => countLogged(d) > 0 || d.notes.trim())
     .sort(([, a], [, b]) => a.date === b.date ? ORDER.indexOf(b.day) - ORDER.indexOf(a.day) : (a.date < b.date ? 1 : -1));
   if (!list.length) {
-    box.innerHTML = emptyHTML('Ainda sem treinos registados', 'Quando registares a primeira série, a sessão aparece aqui, agrupada por semana, com as cargas e as reps de cada exercício.', dataPanelHTML());
+    box.innerHTML = emptyHTML('Ainda sem treinos registados', 'Quando registares a primeira série, a sessão aparece aqui, agrupada por semana, com as cargas e as reps de cada exercício.');
     return;
   }
   const weeks = new Map();
@@ -742,11 +818,12 @@ function renderHistory() {
   <span style="color:var(--muted);font-size:13.5px;font-variant-numeric:tabular-nums">${kinds} de 4 treinos · ${plural(sets, 'série', 'séries')}</span>
 </div>${arr.map(([id, d]) => sessHTML(id, d)).join('')}</section>`;
   }
-  box.innerHTML = html + dataPanelHTML();
+  box.innerHTML = html + '<div style="display:flex;justify-content:center;margin-top:4px"><button class="btn" data-goto="definicoes">Cópia de segurança e exportar CSV</button></div>';
 }
 function removeSession(id) {
   delete S.docs[id];
   S.lastChange = Date.now();
+  if (S.gh.token) { S.gh.dirty[id] = 1; scheduleSync(2000); }
   writeStore(); toast('Sessão apagada');
   renderWeek(); renderView();
 }
@@ -840,9 +917,12 @@ function importData(obj) {
   for (const [id, body] of Object.entries(src)) {
     const c = clean(id, body); if (!c || !countLogged(c)) continue;
     const mine = S.docs[id];
-    if (!mine || !countLogged(mine) || c.updatedAt > mine.updatedAt) { S.docs[id] = c; n++; m += countLogged(c); }
+    if (!mine || !countLogged(mine) || c.updatedAt > mine.updatedAt) {
+      S.docs[id] = c; n++; m += countLogged(c);
+      if (S.gh.token) S.gh.dirty[id] = 1;
+    }
   }
-  if (n) { S.lastChange = Date.now(); writeStore(); }
+  if (n) { S.lastChange = Date.now(); writeStore(); if (S.gh.token) scheduleSync(2000); }
   return { n, m };
 }
 function afterImport(res) {
@@ -949,12 +1029,298 @@ function renderProgress() {
     : emptyHTML('O progresso aparece aqui', 'Depois da primeira sessão vês, por exercício, a melhor série e a evolução semana a semana.');
 }
 
+/* ---------- Sincronização com o repositório privado no GitHub ---------- */
+const GH_API = 'https://api.github.com';
+const ghErr = code => Object.assign(new Error(code), { code });
+function ghFetch(path, opts = {}) {
+  return fetch(GH_API + path, {
+    cache: 'no-store', ...opts,
+    headers: { 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28', 'Authorization':'Bearer ' + S.gh.token, ...(opts.headers || {}) },
+  });
+}
+function b64utf8(s) { const b = new TextEncoder().encode(s); let bin = ''; for (let i = 0; i < b.length; i++) bin += String.fromCharCode(b[i]); return btoa(bin); }
+function unb64utf8(s) { return new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g, '')), c => c.charCodeAt(0))); }
+const sessionLabel = id => { const [date, day] = id.split('_'); return `${DAYS[day] ? DAYS[day].name : day} ${date}`; };
+function checkStatus(r) {
+  if (r.status === 401) throw ghErr('auth');
+  if (r.status === 403 || r.status === 404) throw ghErr(r.status === 404 ? 'repo' : 'perm');
+  if (!r.ok) throw ghErr('net');
+}
+let syncTimer = 0, syncing = false;
+function scheduleSync(ms = 15000) { clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow(), ms); }
+async function pullRemote() {
+  const r = await ghFetch(`/repos/${CFG.repo}/contents/sessions`);
+  if (r.status === 404) {
+    // a pasta ainda não existe: confirma que o repositório existe e envia tudo
+    checkStatus(await ghFetch(`/repos/${CFG.repo}`));
+    for (const [id, d] of Object.entries(S.docs)) if (hasContent(d)) S.gh.dirty[id] = 1;
+    return;
+  }
+  checkStatus(r);
+  const list = (await r.json()).filter(f => f && f.type === 'file' && /\.json$/.test(f.name));
+  const remote = new Set();
+  let changed = false;
+  for (const f of list) {
+    const id = f.name.replace(/\.json$/, '');
+    if (!DOC_ID.test(id)) continue;
+    remote.add(id);
+    if (S.gh.shas[id] === f.sha) continue;
+    if (S.gh.dirty[id]) { S.gh.shas[id] = f.sha; continue; }
+    const fr = await ghFetch(`/repos/${CFG.repo}/contents/sessions/${f.name}`);
+    if (!fr.ok) continue;
+    const fj = await fr.json();
+    let c = null;
+    try { c = clean(id, JSON.parse(unb64utf8(fj.content))); } catch {}
+    S.gh.shas[id] = fj.sha;
+    if (!c) continue;
+    const mine = S.docs[id];
+    if (!mine || c.updatedAt > mine.updatedAt) { S.docs[id] = c; changed = true; }
+    else if (mine.updatedAt > c.updatedAt) S.gh.dirty[id] = 1;
+  }
+  for (const [id, d] of Object.entries(S.docs)) if (!remote.has(id) && hasContent(d)) S.gh.dirty[id] = 1;
+  if (changed) {
+    S.lastChange = Date.now();
+    if (!S.picked) { const d = defaultSelection(); S.day = d.day; S.date = d.date; }
+    renderWeek(); if (!editing()) renderView();
+  }
+}
+async function pushOne(id) {
+  const d = S.docs[id], path = `/repos/${CFG.repo}/contents/sessions/${id}.json`;
+  if (!hasContent(d)) {
+    let sha = S.gh.shas[id];
+    if (!sha) {
+      const g = await ghFetch(path);
+      if (g.status === 404) { delete S.gh.dirty[id]; return; }
+      checkStatus(g); sha = (await g.json()).sha;
+    }
+    const r = await ghFetch(path, { method:'DELETE', body: JSON.stringify({ message:`Apagar ${sessionLabel(id)}`, sha }) });
+    if (r.ok || r.status === 404) { delete S.gh.shas[id]; delete S.gh.dirty[id]; return; }
+    if (r.status === 409 || r.status === 422) { delete S.gh.shas[id]; return; }
+    checkStatus(r); return;
+  }
+  const version = d.updatedAt;
+  const content = b64utf8(JSON.stringify({ date:d.date, day:d.day, sets:d.sets, variants:d.variants, notes:d.notes, updatedAt:d.updatedAt }, null, 1) + '\n');
+  const send = sha => ghFetch(path, { method:'PUT', body: JSON.stringify({ message:`Treino ${sessionLabel(id)}`, content, ...(sha ? { sha } : {}) }) });
+  let r = await send(S.gh.shas[id]);
+  if (r.status === 409 || r.status === 422) {
+    const g = await ghFetch(path);
+    r = await send(g.ok ? (await g.json()).sha : undefined);
+  }
+  checkStatus(r);
+  S.gh.shas[id] = (await r.json()).content.sha;
+  if (S.docs[id] && S.docs[id].updatedAt === version) delete S.gh.dirty[id];
+}
+async function fetchTips() {
+  const r = await ghFetch(`/repos/${CFG.repo}/contents/dicas.json`, { headers: { Accept:'application/vnd.github.raw+json' } });
+  if (r.status === 404) return;
+  checkStatus(r);
+  let t = null;
+  try { t = JSON.parse(await r.text()); } catch { return; }
+  const before = JSON.stringify(S.tips);
+  S.tips = cleanTips(t);
+  if (JSON.stringify(S.tips) !== before) {
+    paintTipsDot();
+    if (S.view === 'dicas') renderTips();
+    else if (S.view === 'treino' && !editing()) renderWorkout();
+  }
+}
+async function syncNow(opts = {}) {
+  if (!S.gh.token || syncing) return;
+  if (navigator.onLine === false) { S.gh.error = 'offline'; paintSyncState(); return; }
+  syncing = true; S.gh.error = ''; paintSyncState();
+  try {
+    if (opts.pull || !S.gh.lastSync) await pullRemote();
+    for (const id of Object.keys(S.gh.dirty)) await pushOne(id);
+    await fetchTips();
+    S.gh.lastSync = Date.now();
+  } catch (e) {
+    S.gh.error = (e && e.code) || 'net';
+  }
+  syncing = false;
+  writeStore(); paintSyncState();
+  if (Object.keys(S.gh.dirty).length && !S.gh.error) scheduleSync(3000);
+}
+async function connectGitHub(token) {
+  const t = String(token || '').trim();
+  if (t.length < 20) { toast('Esse token parece incompleto. Copia-o outra vez.'); return; }
+  S.gh.token = t; S.gh.shas = {}; S.gh.dirty = {}; S.gh.lastSync = 0; S.gh.error = '';
+  writeStore(); renderSettings();
+  await syncNow({ pull:true });
+  if (S.gh.error === 'auth' || S.gh.error === 'repo' || S.gh.error === 'perm') {
+    const msg = { auth:'O GitHub recusou o token. Confirma que o copiaste inteiro.', repo:`O token não vê o repositório ${CFG.repo}. Em Repository access escolhe esse repositório.`, perm:'O token não tem permissão de escrita. Em Contents escolhe Read and write.' }[S.gh.error];
+    S.gh.token = ''; writeStore(); renderSettings(); toast(msg);
+    return;
+  }
+  toast('Ligado ao GitHub. Os treinos ficam guardados no teu repositório.');
+  renderSettings();
+}
+function disconnectGitHub() {
+  if (S.push.enabled) { apiPost('/unsubscribe', { endpoint:S.push.endpoint }).catch(() => {}); S.push.enabled = false; }
+  S.gh = { token:'', shas:{}, dirty:{}, lastSync:0, error:'' };
+  writeStore(); renderSettings(); toast('Desligado do GitHub. Os treinos continuam neste iPhone.');
+}
+function syncStateText() {
+  if (!S.gh.token) return ['Não ligado', 'var(--muted)'];
+  if (syncing) return ['A sincronizar…', 'var(--accent)'];
+  const e = S.gh.error;
+  if (e === 'offline') return ['Sem rede: envia quando voltar', 'var(--up)'];
+  if (e === 'auth' || e === 'perm' || e === 'repo') return ['O token deixou de funcionar', 'var(--bad)'];
+  if (e) return ['Falhou a última sincronização', 'var(--up)'];
+  const pending = Object.keys(S.gh.dirty).length;
+  if (pending) return [`${plural(pending, 'sessão', 'sessões')} por enviar`, 'var(--up)'];
+  return [S.gh.lastSync ? `Sincronizado ${ago(S.gh.lastSync) === 'hoje' ? 'hoje às ' + new Date(S.gh.lastSync).toTimeString().slice(0, 5) : ago(S.gh.lastSync)}` : 'Ligado', 'var(--ok)'];
+}
+function paintSyncState() { const el = $('sync-state'); if (!el) return; const [t, c] = syncStateText(); el.textContent = t; el.style.setProperty('--sc', c); }
+
+/* ---------- Avisos com a app fechada (Web Push pelo servidor de avisos) ---------- */
+const pushReady = () => !!(CFG.api && S.gh.token && S.push.enabled);
+function apiPost(path, data) {
+  return fetch(CFG.api + path, { method:'POST', keepalive:true, headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + S.gh.token }, body: JSON.stringify(data || {}) });
+}
+function pushSchedule() {
+  const t = S.timer; if (!t || !pushReady()) return;
+  t.pushed = true; t.cancelSent = false;
+  apiPost('/rest', { at: t.end, title:'Descanso feito', body: t.next || 'Próxima série' }).catch(() => {});
+}
+function pushCancel() {
+  const t = S.timer; if (t) t.cancelSent = true;
+  if (pushReady()) apiPost('/rest/cancel').catch(() => {});
+}
+const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+const b64urlBytes = buf => { const b = new Uint8Array(buf); let s = ''; for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+const bytesB64url = str => { const s = str.replace(/-/g, '+').replace(/_/g, '/'); return Uint8Array.from(atob(s + '='.repeat((4 - s.length % 4) % 4)), c => c.charCodeAt(0)); };
+async function enablePush() {
+  if (!pushSupported()) { toast(standalone() ? 'Este iPhone não suporta avisos de web apps. Atualiza o iOS.' : 'Abre a app pelo ícone do ecrã principal para ativar os avisos.'); return; }
+  let perm = 'default';
+  try { perm = await Notification.requestPermission(); } catch {}
+  if (perm !== 'granted') { toast('Sem permissão. Ativa as notificações em Definições do iPhone › Notificações › Treino.'); return; }
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const { publicKey } = await (await fetch(CFG.api + '/vapid', { cache:'no-store' })).json();
+    let sub = await reg.pushManager.getSubscription();
+    if (sub && sub.options && sub.options.applicationServerKey && b64urlBytes(sub.options.applicationServerKey) !== publicKey) { await sub.unsubscribe(); sub = null; }
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: bytesB64url(publicKey) });
+    const r = await apiPost('/subscribe', { subscription: sub.toJSON() });
+    if (!r.ok) throw new Error(String(r.status));
+    S.push = { enabled:true, endpoint: sub.endpoint };
+    writeStore(); renderSettings();
+    toast('Avisos ativos. Testa com "Enviar aviso de teste".');
+  } catch {
+    toast('Não foi possível ativar os avisos. Confirma que tens rede e tenta outra vez.');
+  }
+}
+async function disablePush() {
+  try { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) await sub.unsubscribe(); } catch {}
+  apiPost('/unsubscribe', { endpoint:S.push.endpoint }).catch(() => {});
+  S.push = { enabled:false, endpoint:'' }; writeStore(); renderSettings();
+}
+async function testPush() {
+  try { const r = await apiPost('/test'); if (!r.ok) throw 0; toast('Aviso de teste a caminho: sai da app e espera 8 segundos.'); }
+  catch { toast('O servidor de avisos não respondeu. Tenta outra vez com rede.'); }
+}
+
+/* ---------- Dicas do Claude ---------- */
+function cleanTips(t) {
+  const out = { sessions:{} };
+  const src = t && typeof t === 'object' && t.sessions && typeof t.sessions === 'object' ? t.sessions : {};
+  for (const [id, x] of Object.entries(src)) {
+    if (!DOC_ID.test(id) || !x || typeof x !== 'object') continue;
+    const str = (v, n) => typeof v === 'string' ? v.slice(0, n) : '';
+    out.sessions[id] = {
+      createdAt: str(x.createdAt, 40),
+      titulo: str(x.titulo, 120),
+      resumo: str(x.resumo, 800),
+      pontos: (Array.isArray(x.pontos) ? x.pontos : []).slice(0, 12).map(p => ({ tipo: ['bom', 'atencao', 'dica'].includes(p && p.tipo) ? p.tipo : 'dica', texto: str(p && p.texto, 400) })).filter(p => p.texto),
+      proximo: (Array.isArray(x.proximo) ? x.proximo : []).slice(0, 12).map(p => ({ exercicio: str(p && p.exercicio, 40), texto: str(p && p.texto, 400) })).filter(p => p.texto),
+    };
+  }
+  return out;
+}
+const tipEntries = () => Object.entries(S.tips.sessions).sort(([a], [b]) => a < b ? 1 : -1);
+function latestUnseenTip() {
+  const e = tipEntries()[0];
+  return e && S.tipsSeen[e[0]] !== e[1].createdAt ? e : null;
+}
+function paintTipsDot() { const dot = $('tips-dot'); if (dot) dot.hidden = !tipEntries().some(([id, t]) => S.tipsSeen[id] !== t.createdAt); }
+// Dica para este exercício, tirada das dicas mais recentes de uma sessão anterior do mesmo treino.
+function tipFor(it, exId) {
+  const me = sid();
+  for (const [id, t] of tipEntries()) {
+    const [date, day] = id.split('_');
+    if (day !== S.day || id === me || date > S.date) continue;
+    const p = t.proximo.find(x => x.exercicio === exId || x.exercicio === it.id);
+    return p ? p.texto : '';
+  }
+  return '';
+}
+function renderTips() {
+  const box = $('v-dicas'), list = tipEntries();
+  if (!list.length) {
+    box.innerHTML = S.gh.token
+      ? emptyHTML('Ainda sem dicas', 'Todos os dias às 22h o Claude vê os treinos novos e deixa aqui o que correu bem, o que ajustar e os pesos para o treino seguinte.')
+      : emptyHTML('Liga a app ao GitHub', 'As dicas vêm do Claude, que lê os treinos no teu repositório privado. Liga a app em Definições para começar.').replace('data-goto="treino"', 'data-goto="definicoes"').replace('Ir para o treino', 'Abrir Definições');
+    return;
+  }
+  const mk = { bom:'✓', atencao:'!', dica:'•' };
+  box.innerHTML = list.map(([id, t]) => {
+    const [date, day] = id.split('_');
+    const next = t.proximo.map(p => `<li><span class="mk dica" aria-hidden="true">→</span><span><b>${esc(EX[p.exercicio] ? EX[p.exercicio].name : p.exercicio)}</b> · ${esc(p.texto)}</span></li>`).join('');
+    return `<article class="panel">
+<div style="display:flex;align-items:center;gap:8px"><span class="dot" style="--c:var(--${day})"></span><span style="font-size:13.5px;color:var(--muted)"><b style="color:var(--fg)">${DAYS[day].name}</b> · ${fmtDate(date)}</span></div>
+<h3>${esc(t.titulo || 'Dicas do treino')}</h3>
+${t.resumo ? `<p style="color:var(--fg)">${esc(t.resumo)}</p>` : ''}
+${t.pontos.length ? `<ul class="tips">${t.pontos.map(p => `<li><span class="mk ${p.tipo}" aria-hidden="true">${mk[p.tipo]}</span><span>${esc(p.texto)}</span></li>`).join('')}</ul>` : ''}
+${next ? `<div style="display:grid;gap:8px"><p style="font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">Para o próximo ${DAYS[day].name}</p><ul class="tips">${next}</ul></div>` : ''}
+</article>`;
+  }).join('') + '<p style="margin:0;color:var(--muted);font-size:13px;text-align:center">O Claude vê os treinos novos todos os dias às 22h.</p>';
+  for (const [id, t] of list) S.tipsSeen[id] = t.createdAt;
+  writeStore(); paintTipsDot();
+}
+
+/* ---------- Definições ---------- */
+function renderSettings() {
+  const box = $('v-definicoes');
+  const [st, sc] = syncStateText();
+  const connected = !!S.gh.token;
+  const gh = connected
+    ? `<p>Os treinos ficam guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado. É daí que o Claude os lê para te deixar dicas.</p>
+<div class="actions"><button class="btn primary" data-sync>Sincronizar agora</button><button class="btn danger" data-disconnect>Desligar</button></div>`
+    : `<p>Os treinos passam a ficar guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado teu. É daí que o Claude os lê para te deixar dicas, e serve também de cópia de segurança.</p>
+<ol style="margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px;color:var(--muted)"><li>Cria o token no GitHub. Em <b style="color:var(--fg)">Repository access</b> escolhe <b style="color:var(--fg)">Only select repositories → diario-treino-dados</b> e toca em <b style="color:var(--fg)">Generate token</b>.</li><li>Copia o token e cola-o aqui.</li></ol>
+<div class="actions"><a class="btn" href="${CFG.tokenUrl}" target="_blank" rel="noopener">Criar token no GitHub</a></div>
+<input class="field" id="gh-token" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…" aria-label="Token do GitHub">
+<div class="actions"><button class="btn primary" data-connect>Ligar</button></div>`;
+  let push;
+  if (!CFG.api) push = '<p>O servidor de avisos ainda não está publicado.</p>';
+  else if (!connected) push = '<p>Liga primeiro ao GitHub: o servidor de avisos usa o mesmo token para saber que és tu.</p>';
+  else if (!standalone()) push = '<p>Abre a app pelo ícone do ecrã principal para ativar os avisos.</p>';
+  else if (S.push.enabled) push = `<p>No fim de cada descanso recebes uma notificação, mesmo noutra app ou com o iPhone bloqueado. Com a app aberta, o aviso é o da própria app.</p>
+<div class="actions"><button class="btn primary" data-test-push>Enviar aviso de teste</button><button class="btn danger" data-disable-push>Desligar avisos</button></div>`;
+  else push = `<p>Recebe uma notificação no fim de cada descanso, mesmo noutra app ou com o iPhone bloqueado. O iPhone vai pedir autorização.</p>
+<div class="actions"><button class="btn primary" data-enable-push>Ativar avisos</button></div>`;
+  const pushState = S.push.enabled && connected && CFG.api ? ['Ativos neste iPhone', 'var(--ok)'] : ['Desligados', 'var(--muted)'];
+  box.innerHTML = `
+<div class="panel"><h3>Ligação ao GitHub</h3><span class="state" id="sync-state" style="--sc:${sc}">${st}</span>${gh}</div>
+<div class="panel"><h3>Avisos com a app fechada</h3><span class="state" style="--sc:${pushState[1]}">${pushState[0]}</span>${push}</div>
+<div class="panel"><h3>Som no fim do descanso</h3><p>Toca com a app aberta. Com o iPhone em silêncio não se ouve.</p><div class="actions"><button class="btn" data-toggle-sound>${S.sound ? 'Desligar som' : 'Ligar som'}</button></div></div>
+${dataPanelHTML()}`;
+}
+
 /* ---------- Vistas ---------- */
-function renderView() { if (S.view === 'treino') renderWorkout(); else if (S.view === 'historico') renderHistory(); else renderProgress(); }
+const VIEWS = ['treino', 'historico', 'progresso', 'dicas', 'definicoes'];
+function renderView() {
+  if (S.view === 'treino') renderWorkout();
+  else if (S.view === 'historico') renderHistory();
+  else if (S.view === 'progresso') renderProgress();
+  else if (S.view === 'dicas') renderTips();
+  else renderSettings();
+}
 function setView(v) {
+  if (!VIEWS.includes(v)) v = 'treino';
   S.view = v;
   for (const b of document.querySelectorAll('.tab')) b.setAttribute('aria-selected', String(b.dataset.view === v));
-  $('v-treino').hidden = v !== 'treino'; $('v-historico').hidden = v !== 'historico'; $('v-progresso').hidden = v !== 'progresso';
+  $('open-settings').setAttribute('aria-pressed', String(v === 'definicoes'));
+  for (const name of VIEWS) $('v-' + name).hidden = name !== v;
   renderView(); window.scrollTo(0, 0);
 }
 let toastId = 0;
@@ -1005,9 +1371,21 @@ wk.addEventListener('click', e => {
 });
 $('v-treino').addEventListener('focusout', () => setTimeout(() => { if (S.needsRender && !editing()) renderWorkout(); }, 80));
 $('notes').addEventListener('input', e => { ensureCur().notes = e.target.value.slice(0, 2000); touch(); });
+function arm(btn, armedText, normalText) {
+  btn.setAttribute('data-armed', ''); btn.textContent = armedText;
+  setTimeout(() => { if (btn.isConnected) { btn.removeAttribute('data-armed'); btn.textContent = normalText; } }, 4000);
+}
 document.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t || t.disabled) return;
+  if (t.id === 'open-settings') return setView(S.view === 'definicoes' ? 'treino' : 'definicoes');
   if (t.hasAttribute('data-goto')) return setView(t.dataset.goto);
+  if (t.hasAttribute('data-connect')) { const inp = $('gh-token'); connectGitHub(inp ? inp.value : ''); return; }
+  if (t.hasAttribute('data-disconnect')) { if (!t.hasAttribute('data-armed')) return arm(t, 'Toca outra vez para desligar', 'Desligar'); return disconnectGitHub(); }
+  if (t.hasAttribute('data-sync')) { syncNow({ pull:true }).then(() => { renderSettings(); toast(S.gh.error ? 'Não foi possível sincronizar agora.' : 'Sincronizado.'); }); return; }
+  if (t.hasAttribute('data-enable-push')) return enablePush();
+  if (t.hasAttribute('data-disable-push')) return disablePush();
+  if (t.hasAttribute('data-test-push')) return testPush();
+  if (t.hasAttribute('data-toggle-sound')) { S.sound = !S.sound; writeStore(); if (S.sound) { unlockAudio(); beep(); } renderSettings(); return; }
   if (t.hasAttribute('data-backup')) return doBackup();
   if (t.hasAttribute('data-csv')) { shareFile(`diario-treino-${S.today}.csv`, csvText(), 'text/csv').then(r => { if (r === 'fail') toast('Não foi possível exportar.'); }); return; }
   if (t.hasAttribute('data-import-file')) return $('file-in').click();
@@ -1031,12 +1409,21 @@ $('dock').addEventListener('click', e => {
   if (!S.timer) return;
   S.timer.end += +b.dataset.t * 1000;
   S.timer.total = Math.max(S.timer.total, S.timer.end - Date.now());
+  S.timer.cancelSent = false;
+  pushSchedule();
   tick();
 });
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') { checkToday(); if (S.timer) { wakeOn(); tick(); } }
-  else if (S.reload) S.reload();
+  if (document.visibilityState === 'visible') {
+    checkToday();
+    if (S.timer) { wakeOn(); tick(); }
+    if (S.gh.token && Date.now() - S.gh.lastSync > 60000) syncNow({ pull:true });
+  } else {
+    if (S.gh.token && Object.keys(S.gh.dirty).length) syncNow();
+    if (S.reload) S.reload();
+  }
 });
+window.addEventListener('online', () => { if (S.gh.token) syncNow(); });
 window.addEventListener('pageshow', checkToday);
 
 /* ---------- Funcionar sem rede e atualizar ---------- */
@@ -1055,7 +1442,8 @@ try { if (navigator.storage && navigator.storage.persist) navigator.storage.pers
 /* ---------- Arranque ---------- */
 readStore();
 { const d = defaultSelection(); S.day = d.day; S.date = d.date; }
-renderWeek(); renderWorkout();
+renderWeek(); renderWorkout(); paintTipsDot();
+if (S.gh.token) syncNow({ pull:true });
 })();
 </script>
 </body>

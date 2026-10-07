@@ -1,5 +1,5 @@
 // Guarda a app no aparelho para abrir sem rede. Ao mudar qualquer ficheiro, sobe VERSION.
-const VERSION = '2026-10-06.1';
+const VERSION = '2026-10-07.1';
 const CACHE = 'diario-treino-' + VERSION;
 const ASSETS = [
   './',
@@ -33,6 +33,28 @@ self.addEventListener('activate', (event) => {
       .then((keys) => Promise.all(keys.filter((k) => k.startsWith('diario-treino-') && k !== CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// Aviso de fim de descanso enviado pelo servidor (o iOS exige mostrar sempre a notificação).
+self.addEventListener('push', (event) => {
+  let data = {};
+  try { data = event.data ? event.data.json() : {}; } catch { data = { body: event.data ? event.data.text() : '' }; }
+  event.waitUntil(self.registration.showNotification(data.title || 'Treino', {
+    body: data.body || '',
+    icon: './icons/icon-192.png',
+    badge: './icons/icon-192.png',
+    tag: data.tag || 'descanso',
+    renotify: true,
+    data: { url: './' },
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    for (const c of list) if ('focus' in c) return c.focus();
+    return self.clients.openWindow('./');
+  }));
 });
 
 self.addEventListener('fetch', (event) => {

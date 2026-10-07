@@ -1,0 +1,17 @@
+name = "diario-treino"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[vars]
+DATA_REPO = "goncalosousa-hub/diario-treino-dados"
+ALLOWED_ORIGINS = "https://goncalosousa-hub.github.io"
+VAPID_SUBJECT = "https://goncalosousa-hub.github.io/diario-treino/"
+
+[[durable_objects.bindings]]
+name = "HUB"
+class_name = "Hub"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Hub"]
