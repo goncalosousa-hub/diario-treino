@@ -270,6 +270,7 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
 }
 
 /* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
+const APP_VERSION = '2026-10-07.2';
 const CFG = {
   repo: 'goncalosousa-hub/diario-treino-dados',
   api: '', // endereço do servidor de avisos, preenchido depois de o publicar
@@ -1031,20 +1032,22 @@ function renderProgress() {
 
 /* ---------- Sincronização com o repositório privado no GitHub ---------- */
 const GH_API = 'https://api.github.com';
-const ghErr = code => Object.assign(new Error(code), { code });
+const ghErr = (code, status) => Object.assign(new Error(code), { code, status });
+// Só cabeçalhos que o CORS da API do GitHub aceita. Nos GET, um parâmetro único evita respostas guardadas em cache.
 function ghFetch(path, opts = {}) {
-  return fetch(GH_API + path, {
-    cache: 'no-store', ...opts,
-    headers: { 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28', 'Authorization':'Bearer ' + S.gh.token, ...(opts.headers || {}) },
-  });
+  const method = (opts.method || 'GET').toUpperCase();
+  const url = GH_API + path + (method === 'GET' ? (path.includes('?') ? '&' : '?') + '_=' + Date.now() : '');
+  const headers = { 'Accept':'application/vnd.github+json', 'Authorization':'Bearer ' + S.gh.token, ...(opts.headers || {}) };
+  if (method !== 'GET') headers['Content-Type'] = 'application/json';
+  return fetch(url, { ...opts, method, headers });
 }
 function b64utf8(s) { const b = new TextEncoder().encode(s); let bin = ''; for (let i = 0; i < b.length; i++) bin += String.fromCharCode(b[i]); return btoa(bin); }
 function unb64utf8(s) { return new TextDecoder().decode(Uint8Array.from(atob(String(s).replace(/\s/g, '')), c => c.charCodeAt(0))); }
 const sessionLabel = id => { const [date, day] = id.split('_'); return `${DAYS[day] ? DAYS[day].name : day} ${date}`; };
 function checkStatus(r) {
-  if (r.status === 401) throw ghErr('auth');
-  if (r.status === 403 || r.status === 404) throw ghErr(r.status === 404 ? 'repo' : 'perm');
-  if (!r.ok) throw ghErr('net');
+  if (r.status === 401) throw ghErr('auth', 401);
+  if (r.status === 403 || r.status === 404) throw ghErr(r.status === 404 ? 'repo' : 'perm', r.status);
+  if (!r.ok) throw ghErr('net', r.status);
 }
 let syncTimer = 0, syncing = false;
 function scheduleSync(ms = 15000) { clearTimeout(syncTimer); syncTimer = setTimeout(() => syncNow(), ms); }
@@ -1135,20 +1138,28 @@ async function syncNow(opts = {}) {
     S.gh.lastSync = Date.now();
   } catch (e) {
     S.gh.error = (e && e.code) || 'net';
+    S.gh.detail = e && e.status ? `HTTP ${e.status}` : String((e && e.message) || e || 'erro de rede').slice(0, 120);
   }
   syncing = false;
   writeStore(); paintSyncState();
   if (Object.keys(S.gh.dirty).length && !S.gh.error) scheduleSync(3000);
 }
 async function connectGitHub(token) {
-  const t = String(token || '').trim();
+  const t = String(token || '').replace(/\s+/g, '');
   if (t.length < 20) { toast('Esse token parece incompleto. Copia-o outra vez.'); return; }
-  S.gh.token = t; S.gh.shas = {}; S.gh.dirty = {}; S.gh.lastSync = 0; S.gh.error = '';
+  S.gh.token = t; S.gh.shas = {}; S.gh.dirty = {}; S.gh.lastSync = 0; S.gh.error = ''; S.gh.detail = '';
+  S.gh.failMsg = '';
   writeStore(); renderSettings();
   await syncNow({ pull:true });
-  if (S.gh.error === 'auth' || S.gh.error === 'repo' || S.gh.error === 'perm') {
-    const msg = { auth:'O GitHub recusou o token. Confirma que o copiaste inteiro.', repo:`O token não vê o repositório ${CFG.repo}. Em Repository access escolhe esse repositório.`, perm:'O token não tem permissão de escrita. Em Contents escolhe Read and write.' }[S.gh.error];
-    S.gh.token = ''; writeStore(); renderSettings(); toast(msg);
+  if (S.gh.error) {
+    const msg = {
+      auth: 'O GitHub recusou o token. Confirma que o copiaste inteiro.',
+      repo: `O token não vê o repositório ${CFG.repo}. Em Repository access escolhe "Only select repositories" e esse repositório.`,
+      perm: 'O token não tem permissão de escrita. Em Contents escolhe "Read and write".',
+      offline: 'Sem rede. Liga-te à internet e tenta outra vez.',
+    }[S.gh.error] || 'Não consegui falar com o GitHub. Confirma a rede e tenta outra vez.';
+    S.gh.failMsg = `${msg} (${S.gh.detail || S.gh.error})`;
+    S.gh.token = ''; writeStore(); renderSettings(); toast(msg, 7000);
     return;
   }
   toast('Ligado ao GitHub. Os treinos ficam guardados no teu repositório.');
@@ -1196,7 +1207,7 @@ async function enablePush() {
   if (perm !== 'granted') { toast('Sem permissão. Ativa as notificações em Definições do iPhone › Notificações › Treino.'); return; }
   try {
     const reg = await navigator.serviceWorker.ready;
-    const { publicKey } = await (await fetch(CFG.api + '/vapid', { cache:'no-store' })).json();
+    const { publicKey } = await (await fetch(CFG.api + '/vapid?_=' + Date.now())).json();
     let sub = await reg.pushManager.getSubscription();
     if (sub && sub.options && sub.options.applicationServerKey && b64urlBytes(sub.options.applicationServerKey) !== publicKey) { await sub.unsubscribe(); sub = null; }
     if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: bytesB64url(publicKey) });
@@ -1282,10 +1293,12 @@ function renderSettings() {
   const box = $('v-definicoes');
   const [st, sc] = syncStateText();
   const connected = !!S.gh.token;
+  const failNote = !connected && S.gh.failMsg ? `<p class="note up" style="color:var(--fg)">${esc(S.gh.failMsg)}</p>` : '';
+  const errNote = connected && S.gh.error && S.gh.detail ? `<p style="font-size:12.5px">Detalhe do erro: ${esc(S.gh.detail)}</p>` : '';
   const gh = connected
-    ? `<p>Os treinos ficam guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado. É daí que o Claude os lê para te deixar dicas.</p>
+    ? `${errNote}<p>Os treinos ficam guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado. É daí que o Claude os lê para te deixar dicas.</p>
 <div class="actions"><button class="btn primary" data-sync>Sincronizar agora</button><button class="btn danger" data-disconnect>Desligar</button></div>`
-    : `<p>Os treinos passam a ficar guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado teu. É daí que o Claude os lê para te deixar dicas, e serve também de cópia de segurança.</p>
+    : `${failNote}<p>Os treinos passam a ficar guardados em <b style="color:var(--fg)">${CFG.repo}</b>, um repositório privado teu. É daí que o Claude os lê para te deixar dicas, e serve também de cópia de segurança.</p>
 <ol style="margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px;color:var(--muted)"><li>Cria o token no GitHub. Em <b style="color:var(--fg)">Repository access</b> escolhe <b style="color:var(--fg)">Only select repositories → diario-treino-dados</b> e toca em <b style="color:var(--fg)">Generate token</b>.</li><li>Copia o token e cola-o aqui.</li></ol>
 <div class="actions"><a class="btn" href="${CFG.tokenUrl}" target="_blank" rel="noopener">Criar token no GitHub</a></div>
 <input class="field" id="gh-token" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…" aria-label="Token do GitHub">
@@ -1303,7 +1316,8 @@ function renderSettings() {
 <div class="panel"><h3>Ligação ao GitHub</h3><span class="state" id="sync-state" style="--sc:${sc}">${st}</span>${gh}</div>
 <div class="panel"><h3>Avisos com a app fechada</h3><span class="state" style="--sc:${pushState[1]}">${pushState[0]}</span>${push}</div>
 <div class="panel"><h3>Som no fim do descanso</h3><p>Toca com a app aberta. Com o iPhone em silêncio não se ouve.</p><div class="actions"><button class="btn" data-toggle-sound>${S.sound ? 'Desligar som' : 'Ligar som'}</button></div></div>
-${dataPanelHTML()}`;
+${dataPanelHTML()}
+<p style="margin:0;text-align:center;color:var(--muted);font-size:12.5px">Versão ${APP_VERSION}</p>`;
 }
 
 /* ---------- Vistas ---------- */
@@ -1324,7 +1338,7 @@ function setView(v) {
   renderView(); window.scrollTo(0, 0);
 }
 let toastId = 0;
-function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastId); toastId = setTimeout(() => { t.hidden = true; }, 3800); }
+function toast(msg, ms = 3800) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastId); toastId = setTimeout(() => { t.hidden = true; }, ms); }
 
 /* ---------- Eventos ---------- */
 document.querySelector('.tabs').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) setView(b.dataset.view); });

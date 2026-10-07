@@ -13,7 +13,7 @@ function corsHeaders(req, env) {
   const allowed = String(env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
   const h = {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+    'Access-Control-Allow-Headers': 'Authorization, Content-Type, Cache-Control, Pragma',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
