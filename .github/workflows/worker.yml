@@ -27,6 +27,17 @@ jobs:
             echo "::error title=Faltam segredos::Cria CLOUDFLARE_API_TOKEN e CLOUDFLARE_ACCOUNT_ID em Settings > Secrets and variables > Actions."
             exit 1
           fi
-          npx --yes wrangler@4.148.0 deploy 2>&1 | tee deploy.log
+          set +e
+          npx --yes wrangler@4.148.0 deploy > deploy.log 2>&1
+          code=$?
+          set -e
+          cat deploy.log
+          if [ $code -ne 0 ]; then
+            # mostra os erros do wrangler como anotações, para se lerem sem abrir o registo
+            grep -E "ERROR|error|code: [0-9]+|workers.dev|Authentication|permission" deploy.log | head -8 | while IFS= read -r line; do
+              echo "::error title=wrangler::$(echo "$line" | tr -d '\r' | cut -c1-300)"
+            done
+            exit $code
+          fi
           url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' deploy.log | head -1)
           echo "::notice title=Servidor de avisos::${url:-endereço não encontrado no registo}"
