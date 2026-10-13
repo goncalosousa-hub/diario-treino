@@ -247,13 +247,15 @@ const DAYS = {
     { id:'calf', name:'Elevação de gémeos em pé', sets:3, min:12, max:15, rest:90, inc:5 },
     ...CORE,
   ]},
+  // O ginásio não tem barra EZ, paralelas nem banco Scott.
   arms:{ name:'Arms', sub:'Braços, ombros e core', items:[
-    { id:'ez-curl', name:'Curl com barra EZ', sets:3, min:8, max:10, rest:0, inc:2.5, ss:'A' },
-    { id:'dips', name:'Fundos nas paralelas', sets:3, min:8, max:12, rest:90, inc:2.5, bw:true, ss:'A',
-      upHint:'Topo do intervalo: junta 2,5 kg com cinto ou halter' },
+    { id:'bb-curl', name:'Curl com barra direita', sets:3, min:8, max:10, rest:0, inc:2.5, ss:'A',
+      alt:{ id:'db-curl', name:'Curl com halteres', inc:2 } },
+    { id:'close-bench', name:'Supino com pega fechada', sets:3, min:8, max:12, rest:90, inc:2.5, ss:'A' },
     { id:'incline-curl', name:'Curl inclinado com halteres', sets:3, min:10, max:12, rest:0, inc:2, ss:'B' },
-    { id:'skull', name:'Extensão de tríceps deitado (barra EZ)', sets:3, min:10, max:12, rest:90, inc:2.5, ss:'B' },
-    { id:'preacher', name:'Curl no banco Scott', sets:3, min:12, max:15, rest:0, inc:2.5, ss:'C' },
+    { id:'skull', name:'Extensão de tríceps deitado', sets:3, min:10, max:12, rest:90, inc:2.5, ss:'B' },
+    { id:'db-preacher', name:'Curl Scott com haltere no banco inclinado', sets:3, min:12, max:15, rest:0, inc:2, ss:'C', note:'por braço',
+      alt:{ id:'concentration-curl', name:'Curl concentrado' } },
     { id:'oh-ext', name:'Extensão de tríceps acima da cabeça na polia', sets:3, min:12, max:15, rest:90, inc:2.5, ss:'C' },
     { id:'lat-raise-arms', name:'Elevações laterais', sets:3, min:15, max:20, rest:90, inc:1 },
     ...CORE,
@@ -271,7 +273,7 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
 }
 
 /* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
-const APP_VERSION = '2026-10-07.3';
+const APP_VERSION = '2026-10-13.1';
 const CFG = {
   repo: 'goncalosousa-hub/diario-treino-dados',
   api: '', // endereço do servidor de avisos, preenchido depois de o publicar
@@ -603,7 +605,7 @@ function cardHTML(it, n) {
   for (let i = 0; i < rows; i++) rowsHTML += rowHTML(it, info, i);
   const restTxt = it.rest ? `descanso ${fmtRest(it.rest)}` : `sem pausa, segue para o ${n + 1}`;
   const other = it.alt ? (exId === it.id ? it.alt : it) : null;
-  const swap = other ? `<button class="swap" data-swap><span aria-hidden="true">⇄</span> Trocar para ${esc(other.name.toLowerCase())}</button>` : '';
+  const swap = other ? `<button class="swap" data-swap><span aria-hidden="true">⇄</span> Trocar para ${esc(other.name.charAt(0).toLowerCase() + other.name.slice(1))}</button>` : '';
   let status = '';
   if (earned) status = `<span class="badge"><span aria-hidden="true">↑</span> ${upTo != null ? `Sobe para ${ex.bw ? '+' : ''}${fmtKg(upTo)} kg` : esc(ex.upHint || 'Topo do intervalo: aumenta a dificuldade')}</span>`;
   else if (prev) status = `<span class="last">Última vez: ${fmtDate(prev.date)} · ${relTxt(prev.date)}</span>`;
