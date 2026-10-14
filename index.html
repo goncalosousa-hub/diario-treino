@@ -220,10 +220,11 @@ const CORE = [
     upHint:'Topo do intervalo: pernas esticadas ou descida mais lenta' },
 ];
 const DAYS = {
+  // O press de ombros vem antes do supino inclinado, para o ombro chegar mais fresco (conselho do PT).
   push:{ name:'Push', sub:'Peito, ombros e tríceps', items:[
     { id:'bench', name:'Supino plano com barra', sets:4, min:6, max:8, rest:150, inc:2.5 },
-    { id:'incline-db', name:'Supino inclinado com halteres', sets:3, min:8, max:10, rest:120, inc:2 },
     { id:'db-press', name:'Press de ombros com halteres', sets:3, min:8, max:10, rest:120, inc:2 },
+    { id:'incline-db', name:'Supino inclinado com halteres', sets:3, min:8, max:10, rest:120, inc:2 },
     { id:'fly', name:'Aberturas na polia ou peck deck', sets:3, min:12, max:15, rest:90, inc:2.5 },
     { id:'lat-raise-push', name:'Elevações laterais', sets:4, min:12, max:15, rest:90, inc:1 },
     { id:'tri-rope', name:'Tríceps na polia com corda', sets:3, min:10, max:12, rest:90, inc:2.5 },
@@ -273,7 +274,7 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
 }
 
 /* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
-const APP_VERSION = '2026-10-13.1';
+const APP_VERSION = '2026-10-14.1';
 const CFG = {
   repo: 'goncalosousa-hub/diario-treino-dados',
   api: '', // endereço do servidor de avisos, preenchido depois de o publicar

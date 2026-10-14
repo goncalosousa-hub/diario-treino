@@ -1,5 +1,5 @@
 // Guarda a app no aparelho para abrir sem rede. Ao mudar qualquer ficheiro, sobe VERSION.
-const VERSION = '2026-10-13.1';
+const VERSION = '2026-10-14.1';
 const CACHE = 'diario-treino-' + VERSION;
 const ASSETS = [
   './',
