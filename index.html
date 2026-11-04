@@ -100,7 +100,7 @@ button:disabled{cursor:default;opacity:.45}
 .setno{text-align:center;font-family:var(--f-display);font-weight:600;font-size:16px;color:var(--muted)}
 .prev{font-family:var(--f-display);font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.15;overflow-wrap:anywhere}
 .in{width:100%;height:44px;padding:0 4px;border-radius:10px;border:1px solid var(--line);background:var(--sunk);color:var(--fg);text-align:center;font-family:var(--f-display);font-weight:600;font-size:20px;font-variant-numeric:tabular-nums;-webkit-appearance:none;appearance:none}
-.in::placeholder{color:var(--muted);opacity:.6;font-weight:500}
+.in::placeholder{color:var(--muted);opacity:1;font-weight:500}
 .in:focus{outline:none;border-color:var(--accent);background:var(--surface);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .in:disabled{opacity:.6}
 .row.done .in{background:var(--ok-soft);border-color:transparent}
@@ -214,51 +214,53 @@ a.btn{display:inline-flex;align-items:center;color:inherit;text-decoration:none}
 'use strict';
 
 /* ---------- Plano: Push · Pull · Descanso · Legs · Arms · Descanso · Descanso ---------- */
+// Descansos encurtados por conselho do PT: 2 min nos compostos pesados, 90 s nos secundários,
+// 60 s no isolamento e no fim de cada superset, 45 s no core. Os botões ±15 ajustam no momento.
 const CORE = [
-  { id:'cable-crunch', name:'Crunch na polia', sets:3, min:12, max:15, rest:60, inc:2.5, core:true },
-  { id:'hanging-leg-raise', name:'Elevação de pernas suspenso', sets:3, min:10, max:15, rest:60, inc:2.5, bw:true, core:true,
+  { id:'cable-crunch', name:'Crunch na polia', sets:3, min:12, max:15, rest:45, inc:2.5, core:true },
+  { id:'hanging-leg-raise', name:'Elevação de pernas suspenso', sets:3, min:10, max:15, rest:45, inc:2.5, bw:true, core:true,
     upHint:'Topo do intervalo: pernas esticadas ou descida mais lenta' },
 ];
 const DAYS = {
   // O press de ombros vem antes do supino inclinado, para o ombro chegar mais fresco (conselho do PT).
   push:{ name:'Push', sub:'Peito, ombros e tríceps', items:[
-    { id:'bench', name:'Supino plano com barra', sets:4, min:6, max:8, rest:150, inc:2.5 },
-    { id:'db-press', name:'Press de ombros com halteres', sets:3, min:8, max:10, rest:120, inc:2 },
-    { id:'incline-db', name:'Supino inclinado com halteres', sets:3, min:8, max:10, rest:120, inc:2 },
-    { id:'fly', name:'Aberturas na polia ou peck deck', sets:3, min:12, max:15, rest:90, inc:2.5 },
-    { id:'lat-raise-push', name:'Elevações laterais', sets:4, min:12, max:15, rest:90, inc:1 },
-    { id:'tri-rope', name:'Tríceps na polia com corda', sets:3, min:10, max:12, rest:90, inc:2.5 },
+    { id:'bench', name:'Supino plano com barra', sets:4, min:6, max:8, rest:120, inc:2.5 },
+    { id:'db-press', name:'Press de ombros com halteres', sets:3, min:8, max:10, rest:90, inc:2 },
+    { id:'incline-db', name:'Supino inclinado com halteres', sets:3, min:8, max:10, rest:90, inc:2 },
+    { id:'fly', name:'Aberturas na polia ou peck deck', sets:3, min:12, max:15, rest:60, inc:2.5 },
+    { id:'lat-raise-push', name:'Elevações laterais', sets:4, min:12, max:15, rest:60, inc:1 },
+    { id:'tri-rope', name:'Tríceps na polia com corda', sets:3, min:10, max:12, rest:60, inc:2.5 },
   ]},
   pull:{ name:'Pull', sub:'Costas e bíceps', items:[
-    { id:'pullup', name:'Elevações na barra', sets:4, min:6, max:10, rest:150, inc:2.5, bw:true,
+    { id:'pullup', name:'Elevações na barra', sets:4, min:6, max:10, rest:120, inc:2.5, bw:true,
       upHint:'Topo do intervalo: junta 2,5 kg com cinto ou halter',
       alt:{ id:'pulldown', name:'Puxada à frente' } },
-    { id:'bb-row', name:'Remada curvada com barra', sets:3, min:8, max:10, rest:150, inc:2.5 },
-    { id:'close-pulldown', name:'Puxada à frente com pega fechada', sets:3, min:10, max:12, rest:120, inc:2.5 },
-    { id:'db-row', name:'Remada unilateral com haltere', sets:3, min:10, max:12, rest:120, inc:2, note:'por braço',
+    { id:'bb-row', name:'Remada curvada com barra', sets:3, min:8, max:10, rest:120, inc:2.5 },
+    { id:'close-pulldown', name:'Puxada à frente com pega fechada', sets:3, min:10, max:12, rest:90, inc:2.5 },
+    { id:'db-row', name:'Remada unilateral com haltere', sets:3, min:10, max:12, rest:90, inc:2, note:'por braço',
       alt:{ id:'chest-row', name:'Remada com apoio no peito', note:'' } },
-    { id:'face-pull', name:'Face pull', sets:3, min:12, max:15, rest:90, inc:2.5 },
-    { id:'hammer', name:'Curl martelo', sets:3, min:10, max:12, rest:90, inc:2 },
+    { id:'face-pull', name:'Face pull', sets:3, min:12, max:15, rest:60, inc:2.5 },
+    { id:'hammer', name:'Curl martelo', sets:3, min:10, max:12, rest:60, inc:2 },
   ]},
   legs:{ name:'Legs', sub:'Pernas e core', items:[
-    { id:'squat', name:'Agachamento com barra', sets:3, min:6, max:8, rest:150, inc:2.5 },
-    { id:'rdl', name:'Peso morto romeno', sets:3, min:8, max:10, rest:150, inc:2.5 },
-    { id:'leg-press', name:'Leg press', sets:3, min:10, max:12, rest:120, inc:5 },
-    { id:'leg-curl', name:'Leg curl', sets:3, min:10, max:12, rest:90, inc:2.5 },
-    { id:'calf', name:'Elevação de gémeos em pé', sets:3, min:12, max:15, rest:90, inc:5 },
+    { id:'squat', name:'Agachamento com barra', sets:3, min:6, max:8, rest:120, inc:2.5 },
+    { id:'rdl', name:'Peso morto romeno', sets:3, min:8, max:10, rest:120, inc:2.5 },
+    { id:'leg-press', name:'Leg press', sets:3, min:10, max:12, rest:90, inc:5 },
+    { id:'leg-curl', name:'Leg curl', sets:3, min:10, max:12, rest:60, inc:2.5 },
+    { id:'calf', name:'Elevação de gémeos em pé', sets:3, min:12, max:15, rest:60, inc:5 },
     ...CORE,
   ]},
   // O ginásio não tem barra EZ, paralelas nem banco Scott.
   arms:{ name:'Arms', sub:'Braços, ombros e core', items:[
     { id:'bb-curl', name:'Curl com barra direita', sets:3, min:8, max:10, rest:0, inc:2.5, ss:'A',
       alt:{ id:'db-curl', name:'Curl com halteres', inc:2 } },
-    { id:'close-bench', name:'Supino com pega fechada', sets:3, min:8, max:12, rest:90, inc:2.5, ss:'A' },
+    { id:'close-bench', name:'Supino com pega fechada', sets:3, min:8, max:12, rest:60, inc:2.5, ss:'A' },
     { id:'incline-curl', name:'Curl inclinado com halteres', sets:3, min:10, max:12, rest:0, inc:2, ss:'B' },
-    { id:'skull', name:'Extensão de tríceps deitado', sets:3, min:10, max:12, rest:90, inc:2.5, ss:'B' },
+    { id:'skull', name:'Extensão de tríceps deitado', sets:3, min:10, max:12, rest:60, inc:2.5, ss:'B' },
     { id:'db-preacher', name:'Curl Scott com haltere no banco inclinado', sets:3, min:12, max:15, rest:0, inc:2, ss:'C', note:'por braço',
       alt:{ id:'concentration-curl', name:'Curl concentrado' } },
-    { id:'oh-ext', name:'Extensão de tríceps acima da cabeça na polia', sets:3, min:12, max:15, rest:90, inc:2.5, ss:'C' },
-    { id:'lat-raise-arms', name:'Elevações laterais', sets:3, min:15, max:20, rest:90, inc:1 },
+    { id:'oh-ext', name:'Extensão de tríceps acima da cabeça na polia', sets:3, min:12, max:15, rest:60, inc:2.5, ss:'C' },
+    { id:'lat-raise-arms', name:'Elevações laterais', sets:3, min:15, max:20, rest:60, inc:1 },
     ...CORE,
   ]},
 };
@@ -274,7 +276,7 @@ for (const day of ORDER) for (const it of DAYS[day].items) {
 }
 
 /* ---------- Ligações: repositório de dados (GitHub) e servidor de avisos (Cloudflare) ---------- */
-const APP_VERSION = '2026-10-14.1';
+const APP_VERSION = '2026-11-04.1';
 const CFG = {
   repo: 'goncalosousa-hub/diario-treino-dados',
   api: '', // endereço do servidor de avisos, preenchido depois de o publicar
@@ -394,8 +396,11 @@ function writeStore() {
 }
 function paintBanner() {
   const b = $('banner');
-  b.textContent = S.saveError ? 'Não foi possível guardar no iPhone. Faz uma cópia de segurança no Histórico e verifica se há espaço livre.' : '';
-  b.hidden = !S.saveError;
+  const tokenBad = S.gh.token && ['auth', 'perm', 'repo'].includes(S.gh.error);
+  b.textContent = S.saveError ? 'Não foi possível guardar no iPhone. Faz uma cópia de segurança no Histórico e verifica se há espaço livre.'
+    : tokenBad ? 'O token do GitHub deixou de funcionar. Os treinos continuam neste iPhone, mas não estão a ser enviados. Em Definições, desliga e volta a ligar com um token novo.'
+    : '';
+  b.hidden = !b.textContent;
 }
 const sid = () => `${S.date}_${S.day}`;
 const cur = () => S.docs[sid()] || null;
@@ -724,7 +729,11 @@ function hideDock() {
 function nextText(it, ex, i) {
   const items = DAYS[S.day].items, info = slotInfo(it);
   const rows = Math.max(ex.sets, info.sets.length);
-  if (i != null && i + 1 < rows) return `Série ${i + 2} de ${ex.name}`;
+  if (i != null && i + 1 < rows) {
+    // num superset, depois do descanso volta-se ao primeiro exercício do grupo
+    const first = it.ss ? items.find(x => x.ss === it.ss) : it;
+    return `Série ${i + 2} de ${EX[chosenId(first)].name}`;
+  }
   const nx = items[items.indexOf(it) + 1];
   return nx ? `Agora: ${EX[chosenId(nx)].name}` : 'Último exercício do treino';
 }
@@ -967,13 +976,22 @@ $('file-in').addEventListener('change', async e => {
 
 /* ---------- Progresso ---------- */
 const e1rm = s => s.w * (1 + s.r / 30);
+// Com peso extra, o total de reps deixa de servir: subir a carga faz descer as reps. Nesses exercícios conta
+// o 1RM estimado com um peso do corpo de referência, que serve só para comparar as sessões entre si.
+const BW_REF = 75;
+const e1rmBW = s => (BW_REF + (s.w || 0)) * (1 + s.r / 30);
 // Média do 1RM estimado das melhores séries (até ao nº planeado): sobe com mais reps no mesmo peso e com mais peso.
-function metric(L, ex) {
-  if (ex.bw) return L.reduce((a, s) => a + s.r, 0);
-  const v = L.filter(s => s.w > 0).map(e1rm).sort((a, b) => b - a).slice(0, ex.sets);
+function metric(L, ex, weighted) {
+  if (ex.bw && !weighted) return L.reduce((a, s) => a + s.r, 0);
+  const v = (weighted ? L.map(e1rmBW) : L.filter(s => s.w > 0).map(e1rm)).sort((a, b) => b - a).slice(0, ex.sets);
   return v.length ? v.reduce((a, x) => a + x, 0) / v.length : null;
 }
-function bestSet(L) { let b = null; for (const s of L) if (s.w > 0 && (!b || e1rm(s) > e1rm(b))) b = s; return b; }
+function bestSet(L, weighted) {
+  const f = weighted ? e1rmBW : e1rm;
+  let b = null;
+  for (const s of L) if ((weighted || s.w > 0) && (!b || f(s) > f(b))) b = s;
+  return b;
+}
 function spark(vals) {
   const w = 84, h = 30, p = 4, lo = Math.min(...vals), hi = Math.max(...vals);
   const x = i => vals.length === 1 ? w / 2 : p + i * (w - 2 * p) / (vals.length - 1);
@@ -1006,15 +1024,18 @@ function bigChart(pts, ex) {
   if (pts.length > 1) g += `<text x="${P[P.length - 1][0].toFixed(1)}" y="${H - 7}" text-anchor="end" style="${txt}">${fmtShort(pts[pts.length - 1].date)}</text>`;
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Evolução de ${esc(ex.name)}" style="display:block;max-width:100%;overflow:visible">${g}</svg>`;
 }
-function progHTML(ex, pts) {
-  const last = pts[pts.length - 1], first = pts[0];
+function progHTML(ex, pts, weighted) {
+  const last = pts[pts.length - 1], first = pts[0], reps = ex.bw && !weighted;
   let bestTxt;
-  if (ex.bw) bestTxt = `${last.v} reps no total`;
-  else { const b = bestSet(last.L); bestTxt = b ? `${fmtKg(b.w)} kg × ${b.r}` : ''; }
+  if (reps) bestTxt = `${last.v} reps no total`;
+  else {
+    const b = bestSet(last.L, weighted);
+    bestTxt = !b ? '' : !weighted ? `${fmtKg(b.w)} kg × ${b.r}` : b.w > 0 ? `+${fmtKg(b.w)} kg × ${b.r}` : `${b.r} reps`;
+  }
   let delta = '', dc = 'var(--muted)';
   if (pts.length > 1) {
-    const dv = ex.bw ? last.v - first.v : Math.round((last.v / first.v - 1) * 100);
-    delta = `${dv > 0 ? '+' : dv < 0 ? '−' : ''}${Math.abs(dv)}${ex.bw ? ' reps' : '%'}`;
+    const dv = reps ? last.v - first.v : Math.round((last.v / first.v - 1) * 100);
+    delta = `${dv > 0 ? '+' : dv < 0 ? '−' : ''}${Math.abs(dv)}${reps ? ' reps' : '%'}`;
     if (dv > 0) dc = 'var(--ok)';
   }
   const hist = pts.slice().reverse().slice(0, 12).map(q => `<div class="line"><b>${fmtDate(q.date)}</b><span>${esc(setsLine(q.L, ex))}</span></div>`).join('');
@@ -1023,7 +1044,7 @@ function progHTML(ex, pts) {
 <span style="display:flex;align-items:center;gap:8px">${spark(pts.map(q => q.v))}<span style="min-width:3.6em;text-align:right;font-weight:600;font-size:13.5px;font-variant-numeric:tabular-nums;color:${dc}">${delta}</span>${CHEV}</span>
 </summary>
 <div style="display:grid;gap:14px;padding:2px 14px 14px">
-  <div><div style="margin-bottom:6px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">${ex.bw ? 'Reps totais por sessão' : '1RM estimado, média das séries (kg)'}</div>${bigChart(pts, ex)}</div>
+  <div><div style="margin-bottom:6px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">${reps ? 'Reps totais por sessão' : weighted ? 'Índice de força, com o peso extra' : '1RM estimado, média das séries (kg)'}</div>${bigChart(pts, ex)}</div>
   <div class="lines" style="padding:0">${hist}</div>
 </div></details>`;
 }
@@ -1036,15 +1057,15 @@ function renderProgress() {
     const rows = [];
     for (const id of Object.keys(EX)) {
       const ex = EX[id]; if (ex.group !== g) continue;
-      const pts = [];
-      for (const d of sessions) { const L = logged(d.sets[id]); if (!L.length) continue; const v = metric(L, ex); if (v != null) pts.push({ date:d.date, v, L }); }
-      if (pts.length) rows.push(progHTML(ex, pts));
+      const pts = [], weighted = !!ex.bw && sessions.some(d => logged(d.sets[id]).some(s => s.w > 0));
+      for (const d of sessions) { const L = logged(d.sets[id]); if (!L.length) continue; const v = metric(L, ex, weighted); if (v != null) pts.push({ date:d.date, v, L }); }
+      if (pts.length) rows.push(progHTML(ex, pts, weighted));
     }
     if (rows.length) html += `<section style="display:grid;gap:8px">
 <div style="display:flex;align-items:center;gap:8px"><span class="dot" style="--c:var(--${g === 'core' ? 'muted' : g})"></span><h3 style="margin:0;font-family:var(--f-display);font-weight:700;font-size:21px">${label}</h3></div>${rows.join('')}</section>`;
   }
   box.innerHTML = html
-    ? `<p style="margin:0;color:var(--muted);font-size:14px">Cada gráfico mostra o 1RM estimado de cada sessão (o peso que farias para uma só repetição), em média das séries. Sobe quando fazes mais reps com o mesmo peso e quando sobes o peso. Nos exercícios com o peso do corpo conta o total de reps.</p>${html}`
+    ? `<p style="margin:0;color:var(--muted);font-size:14px">Cada gráfico mostra o 1RM estimado de cada sessão (o peso que farias para uma só repetição), em média das séries. Sobe quando fazes mais reps com o mesmo peso e quando sobes o peso. Nos exercícios com o peso do corpo conta o total de reps; se juntares peso, passa a ser um índice que soma as reps e a carga extra.</p>${html}`
     : emptyHTML('O progresso aparece aqui', 'Depois da primeira sessão vês, por exercício, a melhor série e a evolução semana a semana.');
 }
 
@@ -1160,7 +1181,7 @@ async function syncNow(opts = {}) {
     S.gh.detail = e && e.status ? `HTTP ${e.status}` : String((e && e.message) || e || 'erro de rede').slice(0, 120);
   }
   syncing = false;
-  writeStore(); paintSyncState();
+  writeStore(); paintSyncState(); paintBanner();
   if (Object.keys(S.gh.dirty).length && !S.gh.error) scheduleSync(3000);
 }
 async function connectGitHub(token) {
@@ -1178,7 +1199,7 @@ async function connectGitHub(token) {
       offline: 'Sem rede. Liga-te à internet e tenta outra vez.',
     }[S.gh.error] || 'Não consegui falar com o GitHub. Confirma a rede e tenta outra vez.';
     S.gh.failMsg = `${msg} (${S.gh.detail || S.gh.error})`;
-    S.gh.token = ''; writeStore(); renderSettings(); toast(msg, 7000);
+    S.gh.token = ''; writeStore(); paintBanner(); renderSettings(); toast(msg, 7000);
     return;
   }
   toast('Ligado ao GitHub. Os treinos ficam guardados no teu repositório.');
@@ -1187,7 +1208,7 @@ async function connectGitHub(token) {
 function disconnectGitHub() {
   if (S.push.enabled) { apiPost('/unsubscribe', { endpoint:S.push.endpoint }).catch(() => {}); S.push.enabled = false; }
   S.gh = { token:'', shas:{}, dirty:{}, lastSync:0, error:'' };
-  writeStore(); renderSettings(); toast('Desligado do GitHub. Os treinos continuam neste iPhone.');
+  writeStore(); paintBanner(); renderSettings(); toast('Desligado do GitHub. Os treinos continuam neste iPhone.');
 }
 function syncStateText() {
   if (!S.gh.token) return ['Não ligado', 'var(--muted)'];
